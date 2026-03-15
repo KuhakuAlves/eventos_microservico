@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,15 +39,28 @@ public class EventosController {
 
         return ResponseEntity.ok(eventoService.buscaTodosEventos());
     }
+
+    @GetMapping()
+    @Operation(summary = "Retorna um Evento", description = "Responsavel por retornar um evento, pesquisando pelo id",
+            responses = @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Evento.class)))
+    )
+    public ResponseEntity<Evento> retornaEventoPorId(@RequestParam("id") Long id){
+        Evento evento = eventoService.buscarEventoPorId(id);
+        logger.info("Retornando evento {}", evento);
+        return ResponseEntity.ok(evento);
+    }
     @PostMapping("/cadastro")
     @Operation(summary = "Cadastra um novo evento", description = "Contem a operação para criar um novo evento",
             responses = @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
     )
-    public ResponseEntity<String> criarEvento(@RequestBody EventoDto eventoDto){
+    public ResponseEntity<Evento> criarEvento(@RequestBody EventoDto eventoDto){
         logger.info("Evento recebido, {}", eventoDto);
         Evento evento = eventoMapper.eventoDtoToEvento(eventoDto);
-        eventoService.enviaEventoFila(evento);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Evento criado com sucesso!!");
+        evento = eventoService.enviaEventoFila(evento);
+        return (evento != null) ?
+                ResponseEntity.status(HttpStatus.CREATED).body(evento) :
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(evento);
     }
 }

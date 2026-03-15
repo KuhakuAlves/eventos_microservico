@@ -24,18 +24,23 @@ public class EventoService {
         this.bancoApiService = bancoApiService;
     }
 
-    public boolean enviaEventoFila(Evento evento) {
+    public Evento enviaEventoFila(Evento evento) {
         try {
             rabbitTemplate.convertAndSend(exchangeName, "", evento);
+            evento = bancoApiService.criarEvento(evento);
         } catch (Exception e) {
             logger.error("Ocorreu um erro ao tentar enfileirar o evento {}, \n mensagem original: {} ", evento, e.getMessage());
-            return false;
+            return evento;
         }
         logger.info("enviado evento {} para a fila ", evento);
-        return true;
+        return evento;
     }
 
     public List<Evento> buscaTodosEventos(){
         return bancoApiService.buscaTodosEventos();
+    }
+
+    public Evento buscarEventoPorId(Long id){
+        return bancoApiService.buscarEventoPorId(id);
     }
 }

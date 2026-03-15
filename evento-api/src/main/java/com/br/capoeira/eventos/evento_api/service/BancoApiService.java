@@ -18,25 +18,40 @@ public class BancoApiService {
 
     private final RestTemplate restTemplate;
 
-    @Value("banco.api.base.uri")
-    private String baseUri;
+    //@Value("banco.api.base.uri")
+    private final String baseUri = "http://localhost:8181/api/v1/evento/base/dados/";
 
     @Value("banco.api.get.id.uri")
     private String getIdUri;
 
-    @Value("banco.api.get.all.uri")
-    private String getAllUri;
+    //@Value("banco.api.get.all.uri")
+    private String getAllUri = "all/";
 
     public BancoApiService(RestTemplate restTemplate){
         this.restTemplate = restTemplate;
     }
 
     public List<Evento> buscaTodosEventos(){
-        //String uri = baseUri.concat(getAllUri);
-        String uri = "http://localhost:8181/api/v1/evento/base/dados/all/";
+        String uri = baseUri.concat(getAllUri);
+        //String uri = "http://localhost:8181/api/v1/evento/base/dados/all/";
         ResponseEntity<Evento[]> eventosArray = restTemplate.getForEntity(uri, Evento[].class);
         return (eventosArray.getBody() != null)
                 ? Arrays.asList(eventosArray.getBody())
                 : new ArrayList<>();
+    }
+
+    public Evento buscarEventoPorId(Long id){
+        String uri = baseUri.concat("?id=").concat(id.toString());
+        ResponseEntity<Evento> eventoResponse = restTemplate.getForEntity(uri, Evento.class);
+        return (eventoResponse.getBody() != null)
+                ? eventoResponse.getBody()
+                : new Evento();
+    }
+
+    public Evento criarEvento(Evento evento){
+        ResponseEntity<Evento> eventoResponse = restTemplate.postForEntity(baseUri, evento, Evento.class);
+        return (eventoResponse.getBody() != null)
+                ? eventoResponse.getBody()
+                : new Evento();
     }
 }
