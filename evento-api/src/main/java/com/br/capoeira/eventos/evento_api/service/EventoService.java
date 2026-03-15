@@ -1,6 +1,5 @@
 package com.br.capoeira.eventos.evento_api.service;
 
-import com.br.capoeira.eventos.evento_api.controller.EventosController;
 import com.br.capoeira.eventos.evento_api.model.Evento;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +7,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,10 +16,12 @@ public class EventoService {
     @Value("${rabbitmq.exchange.name}")
     private String exchangeName;
 
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
+    private final BancoApiService bancoApiService;
 
-    public EventoService(RabbitTemplate rabbitTemplate) {
+    public EventoService(RabbitTemplate rabbitTemplate, BancoApiService bancoApiService) {
         this.rabbitTemplate = rabbitTemplate;
+        this.bancoApiService = bancoApiService;
     }
 
     public boolean enviaEventoFila(Evento evento) {
@@ -36,7 +36,6 @@ public class EventoService {
     }
 
     public List<Evento> buscaTodosEventos(){
-
-        return new ArrayList<>();
+        return bancoApiService.buscaTodosEventos();
     }
 }

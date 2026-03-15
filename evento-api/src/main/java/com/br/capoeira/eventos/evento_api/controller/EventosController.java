@@ -36,7 +36,7 @@ public class EventosController {
     @GetMapping("/all")
     @Operation(summary = "Retorna uma lista de Eventos", description = "Responsavel por retornar todos os eventos na base de dados",
             responses = @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Evento.class)))
     )
     public ResponseEntity<List<Evento>> buscaTodosEventos(){
 
