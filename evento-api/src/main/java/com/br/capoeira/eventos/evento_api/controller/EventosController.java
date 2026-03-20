@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -62,5 +63,20 @@ public class EventosController {
         return (evento != null) ?
                 ResponseEntity.status(HttpStatus.CREATED).body(evento) :
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(evento);
+    }
+
+    @PutMapping("/upload")
+    @Operation(summary = "Enviar Imagem do Folder do Evento", description = "Responsavel por receber o envio do arquivo da imagem e salvar no banco o caminho dela",
+            responses = @ApiResponse(responseCode = "201", description = "Recurso atualizado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
+    )
+    public ResponseEntity<Evento> uploadImagem(
+            @RequestParam("imagem") MultipartFile file,
+            @RequestParam("id") Long id){
+        logger.info("Evento id recebido, {}", id);
+        Evento evento = eventoService.atualizarFoto(file, id);
+        return (evento != null) ?
+                ResponseEntity.ok(evento) :
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 }

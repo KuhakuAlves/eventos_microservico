@@ -1,11 +1,13 @@
 package com.br.capoeira.eventos.evento_api.service;
 
 import com.br.capoeira.eventos.evento_api.model.Evento;
+import com.br.capoeira.eventos.evento_api.util.UploadImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,6 +36,20 @@ public class EventoService {
         }
         logger.info("enviado evento {} para a fila ", evento);
         return evento;
+    }
+
+    public Evento atualizarFoto(MultipartFile file, Long id){
+        try {
+            Evento evento = bancoApiService.buscarEventoPorId(id);
+            String pathImage = UploadImage.fazendoUpload(file);
+            evento.setImagem(pathImage);
+            bancoApiService.criarEvento(evento);
+            return evento;
+        } catch (Exception e) {
+            logger.error("Ocorreu um erro ao tentar atualizar a foto para o id {}, \n mensagem original: {} ", id, e.getMessage());
+            return null;
+        }
+
     }
 
     public List<Evento> buscaTodosEventos(){

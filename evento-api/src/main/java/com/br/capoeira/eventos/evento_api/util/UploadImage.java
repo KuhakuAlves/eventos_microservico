@@ -2,36 +2,29 @@ package com.br.capoeira.eventos.evento_api.util;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class UploadImage {
-    public static boolean fazerUploadImagem(MultipartFile imagem) {
-        boolean sucessoUpload = false;
-        if (!imagem.isEmpty()) {
-            String nomeArquivo = imagem.getOriginalFilename();
-            try {
-                // Criando o diretório para armazenar o arquivo
-                String workspaceProjeto = "C:\\Users\\Ricardo\\Desktop\\Projetos\\evento-api\\src\\main\\resources\\static\\images\\upload-images-workspace\\";
-                File dir = new File(workspaceProjeto);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                // Criando o arquivo no diretório
-                File serverFile = new File(dir.getAbsolutePath() + File.separator + nomeArquivo);
-                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-                stream.write(imagem.getBytes());
-                stream.close();
-                System. out .println("Arquivo armazenado em:" + serverFile.getAbsolutePath());
-                System. out .println("Você fez o upload do arquivo " + nomeArquivo + " com sucesso");
-                sucessoUpload = true;
-            } catch (Exception e) {
-                System. out .println("Você falhou em carregar o arquivo " + nomeArquivo + " => " + e.getMessage());
+
+    // TODO Corrigir o erro aqui, não está salvando
+    public static String fazendoUpload(MultipartFile file)  {
+        try {
+            String workspaceProjeto = "C:\\Users\\Ricardo\\Desktop\\Projetos\\evento-api\\src\\main\\resources\\static\\images\\";
+            File dir = new File(workspaceProjeto);
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
-        } else {
-            System. out .println("Você falhou em carregar o arquivo porque ele está vazio ");
+
+            String pathName = workspaceProjeto + file.getOriginalFilename();
+            Path path = Files.write(Paths.get(pathName), file.getBytes());
+            return path.toString();
+        } catch (IOException e) {
+            System. out .println(e.getMessage());
+            return "";
         }
-        return sucessoUpload;
     }
 }
