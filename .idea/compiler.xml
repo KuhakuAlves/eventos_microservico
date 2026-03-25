@@ -17,7 +17,7 @@
         </processorPath>
         <module name="evento-api" />
       </profile>
-      <profile name="Annotation profile for banco_api" enabled="true">
+      <profile name="Annotation profile for notificacao" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

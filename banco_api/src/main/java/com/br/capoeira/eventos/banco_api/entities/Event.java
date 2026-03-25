@@ -13,12 +13,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "evento")
-public class Evento {
+@Table(name = "event")
+public class Event {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    private Integer orderId;
     private String titulo;
     private String descricao;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
