@@ -7,9 +7,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import static java.util.Collections.singletonList;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 @Slf4j
 @Component
@@ -22,6 +22,15 @@ public class ProcessorProducer {
     @Value("${rabbitmq.exchange.error.create.name}")
     private String errorCreateExchange;
 
+    @Value("${rabbitmq.exchange.get-all-notification.name}")
+    private String getAllNotificationExchange;
+
+    @Value("${rabbitmq.exchange.update-notification.name}")
+    private String updateNotificationExchange;
+
+    @Value("${rabbitmq.exchange.update-error-notification.name}")
+    private String updateErrorNotificationExchange;
+
     private final RabbitTemplate rabbitTemplate;
 
     public void sendEventForSuccessQueue(Event event){
@@ -30,13 +39,22 @@ public class ProcessorProducer {
     }
 
     public void sendAllEvents(List<Event> events){
-        rabbitTemplate.convertAndSend(createNotificationExchange, "", events);
-        log.info("sending all events to : {} successfuly", createNotificationExchange);
+        rabbitTemplate.convertAndSend(getAllNotificationExchange, "", events);
+        log.info("sending all events to : {} successfuly", getAllNotificationExchange);
+    }
+
+    public void sendEventForUpdateQueue(Event event){
+        rabbitTemplate.convertAndSend(updateNotificationExchange, "", event);
+        log.info("Update Event {}, sent to : {}", event, updateNotificationExchange);
+    }
+
+    public void sendEventForUpdateErrorQueue(Event event){
+        rabbitTemplate.convertAndSend(updateErrorNotificationExchange, "", event);
+        log.info("Error to try Update Event {}, sent to : {}", event, updateErrorNotificationExchange);
     }
 
     public void sendEventForFailQueue(Event event){
         rabbitTemplate.convertAndSend(errorCreateExchange, "", event);
         log.info("Error Event sent to : {}", errorCreateExchange);
     }
-
 }

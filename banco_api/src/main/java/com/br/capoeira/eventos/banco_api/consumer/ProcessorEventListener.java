@@ -25,4 +25,10 @@ public class ProcessorEventListener {
         log.info("Getting All Events ");
         service.findAll();
     }
+
+    @RabbitListener(queues = "${rabbitmq.update.queue.name}")
+    public void updateEvents(Event event){
+        log.info("updating event {} ", event.getId());
+        service.updateEvent(event);
+    }
 }

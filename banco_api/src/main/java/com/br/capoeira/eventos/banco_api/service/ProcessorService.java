@@ -5,11 +5,7 @@ import com.br.capoeira.eventos.banco_api.producer.ProcessorProducer;
 import com.br.capoeira.eventos.banco_api.repository.EventoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
@@ -37,5 +33,24 @@ public class ProcessorService {
             throw new RuntimeException("An error happened when it was trying to save ".concat(e.getMessage()));
         }
 
+    }
+
+    public void updateEvent(Event event) {
+        log.info("update event: {}", event.getId());
+        try{
+            var optSavedEvent = eventoRepository.findTopByTransactionIdOrderByCreateAtDesc(event.getTransactionId());
+            if (optSavedEvent.isPresent()){
+                event.setId(optSavedEvent.get().getId());
+                eventoRepository.save(event);
+                producer.sendEventForUpdateQueue(event);
+            } else {
+                producer.sendEventForUpdateErrorQueue(event);
+                throw new RuntimeException("An error happened \n Event not found: ".concat(event.getTransactionId()));
+            }
+
+        } catch (Exception e) {
+            producer.sendEventForUpdateErrorQueue(event);
+            throw new RuntimeException("An error happened when it was trying to updating event: ".concat(e.getMessage()));
+        }
     }
 }

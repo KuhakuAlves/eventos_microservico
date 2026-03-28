@@ -27,11 +27,20 @@ public class RabbitMqConfig {
     @Value("${rabbitmq.exchange.get-all.name}")
     private String exchangeGetAllName;
 
+    @Value("${rabbitmq.exchange.get-all-notification.name}")
+    private String exchangeGetAllNotificationName;
+
     @Value("${rabbitmq.create.queue.name}")
     private String queueCreateName;
 
     @Value("${rabbitmq.get-all.queue.name}")
     private String queueGetAllName;
+
+    @Value("${rabbitmq.exchange.update.name}")
+    private String exchangeUpdate;
+
+    @Value("${rabbitmq.update.queue.name}")
+    private String queueUpdateName;
 
     @Bean
     public FanoutExchange eventCreateExchange(){
@@ -44,13 +53,23 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public FanoutExchange eventCreateNotificationoExchange(){
-        return new FanoutExchange(createNotificationExchange);
+    public FanoutExchange eventCreateNotificationExchange(){
+        return new FanoutExchange(exchangeGetAllNotificationName);
     }
 
     @Bean
     public FanoutExchange eventGetAllExchange(){
         return new FanoutExchange(exchangeGetAllName);
+    }
+
+    @Bean
+    public FanoutExchange eventGetAllNotificationExchange(){
+        return new FanoutExchange(exchangeGetAllName);
+    }
+
+    @Bean
+    public FanoutExchange updateExchange(){
+        return new FanoutExchange(exchangeUpdate);
     }
 
     @Bean
@@ -64,6 +83,11 @@ public class RabbitMqConfig {
     }
 
     @Bean
+    public Queue processorQueueUpdate() {
+        return new Queue(queueUpdateName);
+    }
+
+    @Bean
     public Binding bindingQueueCreate(){
         return BindingBuilder.bind(processorQueueCreate()).to(eventCreateExchange());
     }
@@ -71,6 +95,11 @@ public class RabbitMqConfig {
     @Bean
     public Binding bindingQueueGetAll(){
         return BindingBuilder.bind(processorQueueGetAll()).to(eventGetAllExchange());
+    }
+
+    @Bean
+    public Binding bindingQueueUpdate(){
+        return BindingBuilder.bind(processorQueueUpdate()).to(updateExchange());
     }
 
     @Bean

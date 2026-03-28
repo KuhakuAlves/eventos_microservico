@@ -43,6 +43,6 @@ public class EventProducer {
 
     public void sendingEventUpdatedToProcessor(Event event){
         log.info("Sending updated Event to save on database {}", event);
-        rabbitTemplate.convertAndSend(createExchange, "", event);
+        rabbitTemplate.convertAndSend(exchangeUpdate, "", event);
     }
 }

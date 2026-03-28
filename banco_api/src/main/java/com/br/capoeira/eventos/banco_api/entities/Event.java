@@ -32,4 +32,20 @@ public class Event {
     private String contact;
     private String image;
     private Boolean active;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createAt;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist(){
+        var now = LocalDateTime.now();
+        createAt = now;
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        updatedAt = LocalDateTime.now();
+    }
 }
