@@ -41,7 +41,8 @@ public class ProcessorService {
             var optSavedEvent = eventoRepository.findTopByTransactionIdOrderByCreateAtDesc(event.getTransactionId());
             if (optSavedEvent.isPresent()){
                 event.setId(optSavedEvent.get().getId());
-                eventoRepository.save(event);
+                event.setCreateAt(optSavedEvent.get().getCreateAt());
+                event = eventoRepository.save(event);
                 producer.sendEventForUpdateQueue(event);
             } else {
                 producer.sendEventForUpdateErrorQueue(event);
