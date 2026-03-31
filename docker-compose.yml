@@ -108,7 +108,11 @@ services:
       RABBIT_PORT: 5672
       RABBIT_USERNAME: rabbitmq
       RABBIT_PASSWORD: rabbitmq
-
+      JAVA_OPTS: >-
+        --add-opens java.base/java.time.chrono=ALL-UNNAMED
+        --add-opens java.base/java.time.format=ALL-UNNAMED
+        --add-opens java.base/java.time.temporal=ALL-UNNAMED
+        --add-opens java.base/java.time.zone=ALL-UNNAMED
 volumes:
   rabbitmq_data:
   rabbitmq_log:

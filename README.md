@@ -13,6 +13,8 @@ Processor Api:
 
 Notificacao API:
 - Essa API recebe um pedido de um ou mais eventos como payload e se comunica com os clients/android para notifica-los
+- Add VM Option for Intellij --add-opens java.base/java.time.chrono=ALL-UNNAMED --add-opens java.base/java.time.format=ALL-UNNAMED --add-opens java.base/java.time.temporal=ALL-UNNAMED --add-opens java.base/java.time.zone=ALL-UNNAMED
+
 
 # Visando geral do projeto
 ![diagram.png](diagram.png)
